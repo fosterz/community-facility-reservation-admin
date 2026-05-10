@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-primary: 79 70 229;
+    --color-sidebar-bg: 15 23 42;
+    --color-sidebar-text: 148 163 184;
+    --color-sidebar-active: 79 70 229;
+  }
+
+  * {
+    @apply box-border;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-900 font-sans antialiased;
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(100 116 139) transparent;
+  }
+}
