@@ -69,14 +69,15 @@ export interface ContactPerson {
 export interface Plan {
   id: string
   name: string
-  description: string
-  monthlyPrice: number
-  annualPrice: number
+  description?: string
+  priceMonthly: number
+  priceAnnual: number
   maxMembers: number
   maxFacilities: number
-  maxAdmins: number
+  maxBookingsPerMonth: number
+  trialDays: number
   isActive: boolean
-  features: PlanFeatureFlags
+  featureFlags: PlanFeatureFlags
 }
 
 export interface PlanFeatureFlags {

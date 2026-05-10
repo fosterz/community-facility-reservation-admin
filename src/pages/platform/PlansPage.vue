@@ -54,8 +54,8 @@ const featureLabels: Record<string, string> = {
         </div>
 
         <div class="mb-4">
-          <p class="text-2xl font-bold text-slate-900">₹{{ plan.monthlyPrice.toLocaleString('en-IN') }}<span class="text-sm font-normal text-slate-400">/mo</span></p>
-          <p class="text-sm text-slate-500">₹{{ plan.annualPrice.toLocaleString('en-IN') }}/yr</p>
+          <p class="text-2xl font-bold text-slate-900">₹{{ plan.priceMonthly.toLocaleString('en-IN') }}<span class="text-sm font-normal text-slate-400">/mo</span></p>
+          <p class="text-sm text-slate-500">₹{{ plan.priceAnnual.toLocaleString('en-IN') }}/yr</p>
         </div>
 
         <div class="text-sm text-slate-600 space-y-1 mb-4">
@@ -66,13 +66,13 @@ const featureLabels: Record<string, string> = {
             <span class="text-slate-400">🏢</span> {{ plan.maxFacilities }} facilities
           </div>
           <div class="flex items-center gap-2">
-            <span class="text-slate-400">🛡️</span> {{ plan.maxAdmins }} admins
+            <span class="text-slate-400">📅</span> {{ plan.maxBookingsPerMonth.toLocaleString() }} bookings/mo
           </div>
         </div>
 
         <div class="flex flex-wrap gap-1.5">
           <span
-            v-for="(enabled, key) in plan.features"
+            v-for="(enabled, key) in plan.featureFlags"
             :key="key"
             :class="[
               'text-xs px-2 py-0.5 rounded-full',
