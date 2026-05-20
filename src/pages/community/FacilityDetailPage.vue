@@ -1,17 +1,21 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { api } from '@/lib/api'
 import type { Facility } from '@/types'
 import StatusBadge from '@/components/ui/StatusBadge.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseSelect from '@/components/ui/BaseSelect.vue'
+import CreateFacilityModal from '@/components/community/CreateFacilityModal.vue'
 
 const route = useRoute()
+const router = useRouter()
 const facility = ref<Facility | null>(null)
 const loading = ref(true)
 const newStatus = ref('')
 const statusLoading = ref(false)
+const showEdit = ref(false)
+const deleteLoading = ref(false)
 
 const statusOptions = [
   { value: 'Active', label: 'Active' },
@@ -19,7 +23,7 @@ const statusOptions = [
   { value: 'Closed', label: 'Closed' },
 ]
 
-onMounted(async () => {
+async function fetchFacility() {
   try {
     const { data } = await api.get(`/community/facilities/${route.params.id}`)
     facility.value = data.data
@@ -27,7 +31,9 @@ onMounted(async () => {
   } finally {
     loading.value = false
   }
-})
+}
+
+onMounted(fetchFacility)
 
 async function updateStatus() {
   if (!facility.value) return
@@ -37,6 +43,17 @@ async function updateStatus() {
     facility.value.status = newStatus.value as Facility['status']
   } finally {
     statusLoading.value = false
+  }
+}
+
+async function deleteFacility() {
+  if (!facility.value || !confirm(`Delete "${facility.value.name}"? This cannot be undone.`)) return
+  deleteLoading.value = true
+  try {
+    await api.delete(`/community/facilities/${facility.value.id}`)
+    router.push('/community/facilities')
+  } finally {
+    deleteLoading.value = false
   }
 }
 </script>
@@ -53,6 +70,10 @@ async function updateStatus() {
           </div>
           <p class="text-sm text-slate-400">{{ facility.category }} · Capacity {{ facility.capacity }}</p>
         </div>
+        <div class="flex items-center gap-2">
+          <BaseButton variant="secondary" @click="showEdit = true">Edit Facility</BaseButton>
+          <BaseButton variant="danger" :loading="deleteLoading" @click="deleteFacility">Delete</BaseButton>
+        </div>
       </div>
 
       <div class="grid grid-cols-3 gap-4">
@@ -61,7 +82,7 @@ async function updateStatus() {
             <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">Booking Configuration</p>
             <div class="grid grid-cols-2 gap-3 text-sm">
               <div><p class="text-slate-400">Slot Duration</p><p class="font-medium">{{ facility.bookingConfig.slotDurationMinutes }} minutes</p></div>
-              <div><p class="text-slate-400">Advance Booking</p><p class="font-medium">{{ facility.bookingConfig.advanceBookingDays }} days</p></div>
+              <div><p class="text-slate-400">Advance Booking</p><p class="font-medium">{{ facility.bookingConfig.advanceBookingMaxDays }} days</p></div>
               <div><p class="text-slate-400">Cancellation Cutoff</p><p class="font-medium">{{ facility.bookingConfig.cancellationCutoffHours }} hours</p></div>
               <div><p class="text-slate-400">Max Slots / Booking</p><p class="font-medium">{{ facility.bookingConfig.maxSlotsPerBooking }}</p></div>
             </div>
@@ -85,6 +106,13 @@ async function updateStatus() {
           </div>
         </div>
       </div>
+
+      <CreateFacilityModal
+        :open="showEdit"
+        :edit-facility="facility"
+        @close="showEdit = false"
+        @updated="fetchFacility(); showEdit = false"
+      />
     </template>
   </div>
 </template>

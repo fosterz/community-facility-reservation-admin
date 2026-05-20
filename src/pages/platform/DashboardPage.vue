@@ -23,10 +23,10 @@ onMounted(async () => {
     <h1 class="text-xl font-bold text-slate-900 mb-6">Platform Dashboard</h1>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-      <StatCard label="Total Tenants" :value="stats.tenants" icon="🏘️" color="indigo" />
-      <StatCard label="Active Subscriptions" :value="stats.activeSubscriptions" icon="✅" color="emerald" />
-      <StatCard label="On Trial" :value="stats.trialTenants" icon="⏳" color="amber" />
-      <StatCard label="Pending Join Requests" :value="stats.pendingRequests" icon="📬" color="sky" />
+      <StatCard label="Total Tenants" :value="stats.tenants" icon="building-office" color="indigo" />
+      <StatCard label="Active Subscriptions" :value="stats.activeSubscriptions" icon="check-circle" color="emerald" />
+      <StatCard label="On Trial" :value="stats.trialTenants" icon="clock" color="amber" />
+      <StatCard label="Pending Join Requests" :value="stats.pendingRequests" icon="inbox" color="sky" />
     </div>
 
     <div class="bg-white rounded-xl border border-slate-200 p-6">

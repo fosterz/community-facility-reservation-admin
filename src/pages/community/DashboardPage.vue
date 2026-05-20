@@ -30,12 +30,12 @@ onMounted(async () => {
     <h1 class="text-xl font-bold text-slate-900 mb-6">Dashboard</h1>
 
     <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-      <StatCard label="Total Members" :value="stats.totalMembers" icon="👥" color="indigo" />
-      <StatCard label="Active Bookings" :value="stats.activeBookings" icon="📅" color="emerald" />
-      <StatCard label="Pending Payments" :value="stats.pendingPayments" icon="💳" color="amber" />
-      <StatCard label="Facilities" :value="stats.facilities" icon="🏢" color="sky" />
-      <StatCard label="Today's Bookings" :value="stats.todayBookings" icon="📆" color="indigo" />
-      <StatCard label="Join Requests" :value="stats.pendingJoinRequests" icon="📬" color="rose" />
+      <StatCard label="Total Members" :value="stats.totalMembers" icon="users" color="indigo" />
+      <StatCard label="Active Bookings" :value="stats.activeBookings" icon="calendar" color="emerald" />
+      <StatCard label="Pending Payments" :value="stats.pendingPayments" icon="credit-card" color="amber" />
+      <StatCard label="Facilities" :value="stats.facilities" icon="building-office" color="sky" />
+      <StatCard label="Today's Bookings" :value="stats.todayBookings" icon="chart-bar" color="indigo" />
+      <StatCard label="Join Requests" :value="stats.pendingJoinRequests" icon="inbox" color="rose" />
     </div>
 
     <div class="bg-white rounded-xl border border-slate-200 p-6">

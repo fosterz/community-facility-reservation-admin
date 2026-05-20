@@ -1,5 +1,7 @@
 <script setup lang="ts">
-const props = defineProps<{ status: string }>()
+import { computed } from 'vue'
+
+const props = defineProps<{ status: string | number | null | undefined }>()
 
 const colorMap: Record<string, string> = {
   active: 'bg-emerald-100 text-emerald-700',
@@ -18,15 +20,17 @@ const colorMap: Record<string, string> = {
   rejected: 'bg-red-100 text-red-700',
   maintenance: 'bg-amber-100 text-amber-700',
   closed: 'bg-slate-100 text-slate-600',
+  pastdue: 'bg-orange-100 text-orange-700',
   staff: 'bg-sky-100 text-sky-700',
   communityadmin: 'bg-purple-100 text-purple-700',
 }
 
-const color = colorMap[props.status.toLowerCase().replace(/\s/g, '')] ?? 'bg-slate-100 text-slate-600'
+const label = computed(() => String(props.status ?? ''))
+const color = computed(() => colorMap[label.value.toLowerCase().replace(/\s/g, '')] ?? 'bg-slate-100 text-slate-600')
 </script>
 
 <template>
   <span :class="['inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium capitalize', color]">
-    {{ status }}
+    {{ label || '—' }}
   </span>
 </template>

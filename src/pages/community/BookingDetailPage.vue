@@ -134,7 +134,9 @@ function formatDate(d: string) {
           </div>
         </div>
         <div v-else-if="booking.paymentStatus === 'Paid'" class="bg-emerald-50 rounded-xl border border-emerald-200 p-6 flex flex-col items-center justify-center gap-2">
-          <span class="text-3xl">✅</span>
+          <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </div>
           <p class="text-emerald-700 font-semibold">Payment Received</p>
           <p class="text-emerald-600 text-sm">₹{{ booking.amountPaid }}</p>
         </div>

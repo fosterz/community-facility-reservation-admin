@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import AppIcon from '@/components/ui/AppIcon.vue'
+
 defineProps<{
   label: string
   value: string | number
@@ -13,7 +15,7 @@ defineProps<{
   <div class="bg-white rounded-xl border border-slate-200 p-5 flex items-center gap-4">
     <div
       :class="[
-        'w-12 h-12 rounded-xl flex items-center justify-center text-xl flex-shrink-0',
+        'w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0',
         color === 'emerald' ? 'bg-emerald-100 text-emerald-600'
           : color === 'amber' ? 'bg-amber-100 text-amber-600'
           : color === 'rose' ? 'bg-rose-100 text-rose-600'
@@ -21,7 +23,7 @@ defineProps<{
           : 'bg-indigo-100 text-indigo-600'
       ]"
     >
-      {{ icon }}
+      <AppIcon :name="icon" size="lg" />
     </div>
     <div class="min-w-0">
       <p class="text-sm text-slate-500 truncate">{{ label }}</p>

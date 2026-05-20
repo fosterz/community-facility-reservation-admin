@@ -50,7 +50,7 @@ function formatDate(d: string) {
   <div>
     <div class="flex items-center justify-between mb-6">
       <h1 class="text-xl font-bold text-slate-900">Announcements</h1>
-      <BaseButton @click="showModal = true">📣 Send Announcement</BaseButton>
+      <BaseButton @click="showModal = true">Send Announcement</BaseButton>
     </div>
 
     <div v-if="loading" class="text-slate-400 text-sm">Loading...</div>

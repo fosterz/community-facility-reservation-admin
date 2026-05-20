@@ -10,6 +10,7 @@ const PlatformTenants = () => import('@/pages/platform/TenantsPage.vue')
 const PlatformTenantDetail = () => import('@/pages/platform/TenantDetailPage.vue')
 const PlatformPlans = () => import('@/pages/platform/PlansPage.vue')
 const PlatformJoinRequests = () => import('@/pages/platform/JoinRequestsPage.vue')
+const PlatformSubscriptions = () => import('@/pages/platform/SubscriptionsPage.vue')
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -27,7 +28,8 @@ export const router = createRouter({
         { path: 'tenants', component: PlatformTenants },
         { path: 'tenants/:id', component: PlatformTenantDetail },
         { path: 'plans', component: PlatformPlans },
-        { path: 'join-requests', component: PlatformJoinRequests }
+        { path: 'join-requests', component: PlatformJoinRequests },
+        { path: 'subscriptions', component: PlatformSubscriptions }
       ]
     },
 

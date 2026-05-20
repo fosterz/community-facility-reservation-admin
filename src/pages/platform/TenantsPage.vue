@@ -9,6 +9,7 @@ import StatusBadge from '@/components/ui/StatusBadge.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseSelect from '@/components/ui/BaseSelect.vue'
+import BaseModal from '@/components/ui/BaseModal.vue'
 import CreateTenantModal from '@/components/platform/CreateTenantModal.vue'
 
 const router = useRouter()
@@ -19,13 +20,23 @@ const status = ref('')
 const page = ref(1)
 const showCreate = ref(false)
 
+// Edit modal
+const showEdit = ref(false)
+const editSaving = ref(false)
+const editError = ref('')
+const editingTenant = ref<Tenant | null>(null)
+const editForm = ref({
+  name: '', type: '', addressLine1: '', addressLine2: '', city: '', state: '', pincode: '',
+  contactPersonName: '', contactPersonEmail: '', contactPersonMobile: '',
+})
+
 const columns = [
   { key: 'name', label: 'Community' },
   { key: 'slug', label: 'Slug' },
   { key: 'status', label: 'Status', width: '120px' },
   { key: 'contact', label: 'Contact' },
   { key: 'created', label: 'Created', width: '120px' },
-  { key: 'actions', label: '', width: '80px' },
+  { key: 'actions', label: '', width: '120px' },
 ]
 
 const statusOptions = [
@@ -37,6 +48,13 @@ const statusOptions = [
   { value: 'Expired', label: 'Expired' },
 ]
 
+const typeOptions = [
+  { value: 'Apartment', label: 'Apartment Complex' },
+  { value: 'Villa', label: 'Villa Complex' },
+  { value: 'Gated', label: 'Gated Community' },
+  { value: 'Commercial', label: 'Commercial Complex' },
+  { value: 'Other', label: 'Other' },
+]
 async function fetchTenants() {
   loading.value = true
   try {
@@ -55,13 +73,52 @@ watch(search, () => {
   clearTimeout(searchTimer)
   searchTimer = setTimeout(() => { page.value = 1; fetchTenants() }, 400)
 })
-
 onMounted(fetchTenants)
 
 function t(row: unknown) { return row as Tenant }
 function onPageChange(p: number) { page.value = p; fetchTenants() }
 function formatDate(d: string) {
   return new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+}
+
+function openEdit(tenant: Tenant) {
+  editingTenant.value = tenant
+  editForm.value = {
+    name: tenant.name,
+    type: (tenant as unknown as { type: string }).type ?? 'Apartment',
+    addressLine1: tenant.address?.line1 ?? '',
+    addressLine2: tenant.address?.line2 ?? '',
+    city: tenant.address?.city ?? '',
+    state: tenant.address?.state ?? '',
+    pincode: tenant.address?.pincode ?? '',
+    contactPersonName: tenant.contactPerson?.name ?? '',
+    contactPersonEmail: tenant.contactPerson?.email ?? '',
+    contactPersonMobile: tenant.contactPerson?.mobile ?? '',
+  }
+  editError.value = ''
+  showEdit.value = true
+}
+
+async function saveEdit() {
+  if (!editingTenant.value) return
+  editSaving.value = true
+  editError.value = ''
+  try {
+    await api.put(`/platform/tenants/${editingTenant.value.id}`, editForm.value)
+    showEdit.value = false
+    fetchTenants()
+  } catch (err: unknown) {
+    const e = err as { response?: { data?: { message?: string } } }
+    editError.value = e.response?.data?.message ?? 'Failed to save.'
+  } finally {
+    editSaving.value = false
+  }
+}
+
+async function cancelTenant(tenant: Tenant) {
+  if (!confirm(`Cancel "${tenant.name}"? The community will lose access.`)) return
+  await api.delete(`/platform/tenants/${tenant.id}`)
+  fetchTenants()
 }
 </script>
 
@@ -95,12 +152,22 @@ function formatDate(d: string) {
         </td>
         <td class="px-4 py-3 text-sm text-slate-500">{{ formatDate(t(row).createdAt) }}</td>
         <td class="px-4 py-3">
-          <button
-            class="text-indigo-600 hover:text-indigo-800 text-sm font-medium"
-            @click="router.push(`/platform/tenants/${t(row).id}`)"
-          >
-            View
-          </button>
+          <div class="flex items-center gap-2">
+            <button
+              class="text-indigo-600 hover:text-indigo-800 text-sm font-medium"
+              @click="router.push(`/platform/tenants/${t(row).id}`)"
+            >View</button>
+            <span class="text-slate-200">|</span>
+            <button
+              class="text-slate-500 hover:text-slate-800 text-sm font-medium"
+              @click="openEdit(t(row))"
+            >Edit</button>
+            <span class="text-slate-200">|</span>
+            <button
+              class="text-red-500 hover:text-red-700 text-sm font-medium"
+              @click="cancelTenant(t(row))"
+            >Cancel</button>
+          </div>
         </td>
       </template>
     </DataTable>
@@ -114,5 +181,37 @@ function formatDate(d: string) {
     />
 
     <CreateTenantModal :open="showCreate" @close="showCreate = false" @created="fetchTenants" />
+
+    <!-- Edit Modal -->
+    <BaseModal :open="showEdit" title="Edit Community" size="lg" @close="showEdit = false">
+      <form class="space-y-4" @submit.prevent="saveEdit">
+        <div class="grid grid-cols-2 gap-4">
+          <div class="col-span-2">
+            <BaseInput v-model="editForm.name" label="Community Name *" />
+          </div>
+          <BaseSelect v-model="editForm.type" label="Type *" :options="typeOptions" />
+          <div class="col-span-2">
+            <BaseInput v-model="editForm.addressLine1" label="Street Address *" />
+          </div>
+          <BaseInput v-model="editForm.city" label="City *" />
+          <BaseInput v-model="editForm.state" label="State *" />
+          <BaseInput v-model="editForm.pincode" label="Pincode *" />
+        </div>
+        <hr class="border-slate-100" />
+        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Contact Person</p>
+        <div class="grid grid-cols-3 gap-4">
+          <BaseInput v-model="editForm.contactPersonName" label="Name *" />
+          <BaseInput v-model="editForm.contactPersonEmail" label="Email *" type="email" />
+          <BaseInput v-model="editForm.contactPersonMobile" label="Mobile *" />
+        </div>
+        <div v-if="editError" class="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg px-4 py-3">
+          {{ editError }}
+        </div>
+      </form>
+      <template #footer>
+        <BaseButton variant="secondary" @click="showEdit = false">Cancel</BaseButton>
+        <BaseButton :loading="editSaving" @click="saveEdit">Save Changes</BaseButton>
+      </template>
+    </BaseModal>
   </div>
 </template>

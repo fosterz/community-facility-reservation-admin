@@ -1,23 +1,27 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import AppIcon from '@/components/ui/AppIcon.vue'
 
 const auth = useAuthStore()
 const router = useRouter()
-const sidebarOpen = ref(true)
+const route = useRoute()
+const sidebarOpen = ref(window.innerWidth >= 768)
+
+watch(() => route.path, () => { if (window.innerWidth < 768) sidebarOpen.value = false })
 
 const allNavItems = [
-  { label: 'Dashboard', path: '/community/dashboard', icon: '📊', roles: ['community_admin', 'staff'] },
-  { label: 'Members', path: '/community/members', icon: '👥', roles: ['community_admin', 'staff'] },
-  { label: 'Facilities', path: '/community/facilities', icon: '🏢', roles: ['community_admin', 'staff'] },
-  { label: 'Bookings', path: '/community/bookings', icon: '📅', roles: ['community_admin', 'staff'] },
-  { label: 'Invoices', path: '/community/invoices', icon: '🧾', roles: ['community_admin', 'staff'] },
-  { label: 'Announcements', path: '/community/announcements', icon: '📣', roles: ['community_admin'] },
-  { label: 'Join Requests', path: '/community/join-requests', icon: '📬', roles: ['community_admin'] },
-  { label: 'Staff', path: '/community/staff', icon: '🛡️', roles: ['community_admin'] },
-  { label: 'Reports', path: '/community/reports', icon: '📈', roles: ['community_admin'] },
-  { label: 'Settings', path: '/community/settings', icon: '⚙️', roles: ['community_admin'] },
+  { label: 'Dashboard', path: '/community/dashboard', icon: 'chart-bar', roles: ['community_admin', 'staff'] },
+  { label: 'Members', path: '/community/members', icon: 'users', roles: ['community_admin', 'staff'] },
+  { label: 'Facilities', path: '/community/facilities', icon: 'building-office', roles: ['community_admin', 'staff'] },
+  { label: 'Bookings', path: '/community/bookings', icon: 'calendar', roles: ['community_admin', 'staff'] },
+  { label: 'Invoices', path: '/community/invoices', icon: 'document-text', roles: ['community_admin', 'staff'] },
+  { label: 'Announcements', path: '/community/announcements', icon: 'megaphone', roles: ['community_admin'] },
+  { label: 'Join Requests', path: '/community/join-requests', icon: 'inbox', roles: ['community_admin'] },
+  { label: 'Staff', path: '/community/staff', icon: 'shield-check', roles: ['community_admin'] },
+  { label: 'Reports', path: '/community/reports', icon: 'chart-pie', roles: ['community_admin'] },
+  { label: 'Settings', path: '/community/settings', icon: 'cog', roles: ['community_admin'] },
 ]
 
 const navItems = computed(() =>
@@ -32,12 +36,19 @@ function logout() {
 
 <template>
   <div class="flex h-screen bg-slate-50 overflow-hidden">
+    <!-- Backdrop (mobile) -->
+    <div v-if="sidebarOpen" class="fixed inset-0 bg-black/40 z-40 md:hidden" @click="sidebarOpen = false" />
+
     <!-- Sidebar -->
     <aside
-      :class="['flex flex-col bg-slate-900 transition-all duration-300 flex-shrink-0', sidebarOpen ? 'w-60' : 'w-16']"
+      :class="[
+        'flex flex-col bg-slate-900 transition-all duration-300 z-50',
+        'fixed md:relative inset-y-0 left-0',
+        sidebarOpen ? 'w-60 translate-x-0' : '-translate-x-full md:translate-x-0 md:w-16',
+      ]"
     >
       <!-- Logo -->
-      <div class="h-16 flex items-center gap-3 px-4 border-b border-slate-700/50">
+      <div class="h-16 flex items-center gap-3 px-4 border-b border-slate-700/50 flex-shrink-0">
         <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
           CFR
         </div>
@@ -48,7 +59,7 @@ function logout() {
       </div>
 
       <!-- Nav -->
-      <nav class="flex-1 py-4 px-2 space-y-0.5 overflow-y-auto scrollbar-thin">
+      <nav class="flex-1 py-4 px-2 space-y-0.5 overflow-y-auto">
         <RouterLink
           v-for="item in navItems"
           :key="item.path"
@@ -57,16 +68,16 @@ function logout() {
             'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors',
             $route.path.startsWith(item.path)
               ? 'bg-indigo-600 text-white'
-              : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+              : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200',
           ]"
         >
-          <span class="text-base flex-shrink-0">{{ item.icon }}</span>
+          <AppIcon :name="item.icon" class="flex-shrink-0" />
           <span v-if="sidebarOpen">{{ item.label }}</span>
         </RouterLink>
       </nav>
 
       <!-- User -->
-      <div class="p-3 border-t border-slate-700/50">
+      <div class="p-3 border-t border-slate-700/50 flex-shrink-0">
         <div class="flex items-center gap-3 px-2 py-2">
           <div class="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
             {{ auth.user?.name?.charAt(0) }}

@@ -44,16 +44,20 @@ export interface Tenant {
   id: string
   name: string
   slug: string
+  type: string
   status: 'Trial' | 'Active' | 'Suspended' | 'Cancelled' | 'Expired'
   address: TenantAddress
   contactPerson: ContactPerson
-  subscriptionPlanId?: string
+  timezone: string
+  subscriptionId?: string
+  trialEndsAt?: string
   createdAt: string
   updatedAt?: string
 }
 
 export interface TenantAddress {
-  street: string
+  line1: string
+  line2?: string
   city: string
   state: string
   pincode: string
@@ -75,7 +79,6 @@ export interface Plan {
   maxMembers: number
   maxFacilities: number
   maxBookingsPerMonth: number
-  trialDays: number
   isActive: boolean
   featureFlags: PlanFeatureFlags
 }
@@ -95,11 +98,13 @@ export interface Subscription {
   id: string
   tenantId: string
   planId: string
-  planName: string
-  status: 'Trial' | 'Active' | 'PastDue' | 'Cancelled' | 'Expired'
-  startDate: string
-  endDate: string
-  trialEndDate?: string
+  status: 'Active' | 'PastDue' | 'Cancelled' | 'Expired'
+  billingCycle: string
+  amount: number
+  startsAt?: string
+  endsAt?: string
+  notes?: string
+  createdAt: string
 }
 
 export interface JoinRequest {
@@ -159,7 +164,7 @@ export interface FacilityPricing {
 
 export interface BookingConfig {
   slotDurationMinutes: number
-  advanceBookingDays: number
+  advanceBookingMaxDays: number
   cancellationCutoffHours: number
   maxSlotsPerBooking: number
   maxBookingsPerDayPerMember: number

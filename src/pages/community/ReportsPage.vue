@@ -52,17 +52,17 @@ onMounted(fetchReport)
     </div>
 
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      <StatCard label="Total Bookings" :value="summary.totalBookings" icon="📅" color="indigo" />
-      <StatCard label="Confirmed" :value="summary.confirmedBookings" icon="✅" color="emerald" />
-      <StatCard label="Cancelled" :value="summary.cancelledBookings" icon="❌" color="rose" />
-      <StatCard label="No-Shows" :value="summary.noShowBookings" icon="⏰" color="amber" />
+      <StatCard label="Total Bookings" :value="summary.totalBookings" icon="calendar" color="indigo" />
+      <StatCard label="Confirmed" :value="summary.confirmedBookings" icon="check-circle" color="emerald" />
+      <StatCard label="Cancelled" :value="summary.cancelledBookings" icon="trash" color="rose" />
+      <StatCard label="No-Shows" :value="summary.noShowBookings" icon="clock" color="amber" />
     </div>
 
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      <StatCard label="Total Revenue" :value="`₹${summary.totalRevenue.toLocaleString('en-IN')}`" icon="💰" color="emerald" />
-      <StatCard label="Pending Revenue" :value="`₹${summary.pendingRevenue.toLocaleString('en-IN')}`" icon="⏳" color="amber" />
-      <StatCard label="Total Members" :value="summary.totalMembers" icon="👥" color="indigo" />
-      <StatCard label="Active Members" :value="summary.activeMembers" icon="👤" color="sky" />
+      <StatCard label="Total Revenue" :value="`₹${summary.totalRevenue.toLocaleString('en-IN')}`" icon="currency-rupee" color="emerald" />
+      <StatCard label="Pending Revenue" :value="`₹${summary.pendingRevenue.toLocaleString('en-IN')}`" icon="banknote" color="amber" />
+      <StatCard label="Total Members" :value="summary.totalMembers" icon="users" color="indigo" />
+      <StatCard label="Active Members" :value="summary.activeMembers" icon="user" color="sky" />
     </div>
 
     <div class="bg-white rounded-xl border border-slate-200 p-6">
