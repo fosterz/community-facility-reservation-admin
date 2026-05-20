@@ -235,6 +235,16 @@ async function toggleMap() {
 
 async function submit() {
   error.value = ''
+  if (!form.name || !form.addressLine1 || !form.city || !form.state || !form.pincode ||
+      !form.contactPersonName || !form.contactPersonEmail || !form.contactPersonMobile ||
+      !form.adminEmail || !form.adminPassword) {
+    error.value = 'Please fill in all required fields including Admin Email and Admin Password.'
+    return
+  }
+  if (form.adminPassword.length < 8) {
+    error.value = 'Admin password must be at least 8 characters.'
+    return
+  }
   loading.value = true
   try {
     await api.post('/platform/tenants', {
